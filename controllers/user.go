@@ -1,17 +1,19 @@
 package controllers
 
 import (
+	"errors"
+	"learnfiber/database"
 	"learnfiber/models"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type User struct {
-	ID        uint   `json:"id" gorm:"primaryKey"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Username  string `gorm:"size:255;not null;unique" json:"username"`
-	Password  string `gorm:"size:255;not null;" json:"password"`
+	ID    uint   `json:"id" gorm:"primaryKey"`
+	Name  string `json:"first_name"`
+	Email string `json:"email"`
+	// Username string `gorm:"size:255;not null;unique" json:"username"`
+	Password []byte `gorm:"size:255;not null;" json:"password"`
 }
 
 // func CreateResponseUser(userModel models.User) User {
@@ -33,9 +35,9 @@ type User struct {
 func GetAllUsers() ([]User, error) {
 	var u []User
 
-	// if err := database.DB.Find(&u).Error; err != nil {
-	// 	return u, errors.New("no users found")
-	// }
+	if err := database.DB.Find(&u).Error; err != nil {
+		return u, errors.New("no users found")
+	}
 	return u, nil
 
 }

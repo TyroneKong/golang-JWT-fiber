@@ -24,9 +24,9 @@ func Register(c *fiber.Ctx) error {
 	// needed to convert password to byte array as func does not accept string
 	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
 	user := models.User{
-		Name:     data["name"],
-		Email:    data["email"],
-		Username: data["username"],
+		Name:  data["name"],
+		Email: data["email"],
+		// Username: data["username"],
 		Password: password,
 	}
 	database.DB.Create(&user)
