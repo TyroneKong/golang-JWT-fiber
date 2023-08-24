@@ -30,6 +30,7 @@ func main() {
 	app.Put("/allusers/:id", controllers.UpdateUser)
 	app.Post("/register", controllers.Register)
 	app.Post("/login", controllers.Login)
+	app.Get("/currentuser", controllers.CurrentUser)
 	log.Fatal(app.Listen(":3000"))
 
 }
