@@ -9,13 +9,10 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
-func main() {
-
-	database.ConnectDB()
+func setupRoutes(app *fiber.App) {
 
 	controller := controllers.NewHandler()
 
-	app := fiber.New()
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
 	}))
@@ -23,7 +20,6 @@ func main() {
 	app.Get("/", controller.Controller)
 	app.Get("/albums", controllers.GetAlbums)
 	app.Get("/albums/:id", controllers.GetAlbumsById)
-	// app.Post("/createuser", controllers.CreateUser)
 	app.Post("/createproduct", controllers.CreateProduct)
 	app.Get("/allusers", controllers.AllUsers)
 	app.Get("/allusers/:id", controllers.GetUserById)
@@ -33,5 +29,14 @@ func main() {
 	app.Get("/currentuser", controllers.CurrentUser)
 	app.Get("/logout", controllers.Logout)
 	log.Fatal(app.Listen(":3000"))
+}
+
+func main() {
+
+	database.ConnectDB()
+
+	app := fiber.New()
+
+	setupRoutes(app)
 
 }

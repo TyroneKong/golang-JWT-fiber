@@ -24,9 +24,9 @@ func Register(c *fiber.Ctx) error {
 	// needed to convert password to byte array as func does not accept string
 	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
 	user := models.User{
-		Name:  data["name"],
-		Email: data["email"],
-		// Username: data["username"],
+		Name:     data["name"],
+		Email:    data["email"],
+		Username: data["username"],
 		Password: password,
 	}
 	database.DB.Create(&user)
@@ -71,9 +71,12 @@ func Login(c *fiber.Ctx) error {
 	// set the token in a http only cookie
 	cookie := fiber.Cookie{
 		Name:     "jwt",
+		Path:     "/",
 		Value:    token,
-		Expires:  time.Now().Add(time.Hour * 24),
+		Expires:  time.Now().Add(time.Hour * 48),
 		HTTPOnly: true,
+		Secure:   true,
+		SameSite: "lax",
 	}
 	c.Cookie(&cookie)
 	return c.JSON(fiber.Map{

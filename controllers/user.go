@@ -9,10 +9,10 @@ import (
 )
 
 type User struct {
-	ID    uint   `json:"id" gorm:"primaryKey"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	// Username string `gorm:"size:255;not null;unique" json:"username"`
+	ID       uint   `json:"id" gorm:"primaryKey"`
+	Name     string `json:"name"`
+	Username string `json:"username"`
+	Email    string `json:"email"`
 	Password []byte `gorm:"size:255;not null;" json:"password"`
 }
 
@@ -96,8 +96,8 @@ func UpdateUser(c *fiber.Ctx) error {
 		return c.Status(400).JSON("no user matching that id")
 	}
 	type UpdateUser struct {
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
+		Username string `json:"username"`
+		Email    string `json:"email"`
 	}
 
 	var updateData UpdateUser
