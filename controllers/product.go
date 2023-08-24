@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"learnfiber/database"
 	"learnfiber/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,7 +22,7 @@ func CreateProduct(c *fiber.Ctx) error {
 	if err := c.BodyParser(&product); err != nil {
 		return c.Status(400).JSON(err.Error())
 	}
-	database.DB.Create(&product)
+	// database.DB.Create(&product)
 	response := CreateResponseProduct(product)
 	return c.Status(200).JSON(response)
 }

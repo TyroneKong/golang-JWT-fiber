@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"errors"
-	"learnfiber/database"
 	"learnfiber/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,28 +14,28 @@ type User struct {
 	Password  string `gorm:"size:255;not null;" json:"password"`
 }
 
-func CreateResponseUser(userModel models.User) User {
-	return User{ID: userModel.ID, FirstName: userModel.FirstName, LastName: userModel.LastName, Username: userModel.FirstName, Password: userModel.FirstName}
-}
+// func CreateResponseUser(userModel models.User) User {
+// 	return User{ID: userModel.ID, FirstName: userModel.FirstName, LastName: userModel.LastName, Username: userModel.FirstName, Password: userModel.FirstName}
+// }
 
-func CreateUser(c *fiber.Ctx) error {
-	var user models.User
+// func CreateUser(c *fiber.Ctx) error {
+// 	var user models.User
 
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(400).JSON(err.Error())
-	}
-	database.DB.Create(&user)
-	response := CreateResponseUser(user)
+// 	if err := c.BodyParser(&user); err != nil {
+// 		return c.Status(400).JSON(err.Error())
+// 	}
+// 	// database.DB.Create(&user)
+// 	response := CreateResponseUser(user)
 
-	return c.Status(200).JSON(response)
-}
+// 	return c.Status(200).JSON(response)
+// }
 
 func GetAllUsers() ([]User, error) {
 	var u []User
 
-	if err := database.DB.Find(&u).Error; err != nil {
-		return u, errors.New("no users found")
-	}
+	// if err := database.DB.Find(&u).Error; err != nil {
+	// 	return u, errors.New("no users found")
+	// }
 	return u, nil
 
 }
@@ -55,9 +53,9 @@ func AllUsers(c *fiber.Ctx) error {
 
 func findUser(id int, user *models.User) error {
 
-	if err := database.DB.Find(&user, "id = ?", id).Error; err != nil {
-		return errors.New("user does not exist")
-	}
+	// if err := database.DB.Find(&user, "id = ?", id).Error; err != nil {
+	// 	return errors.New("user does not exist")
+	// }
 
 	return nil
 }
@@ -105,10 +103,10 @@ func UpdateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&updateData); err != nil {
 		return c.Status(500).JSON(err.Error())
 	}
-	user.FirstName = updateData.FirstName
-	user.LastName = updateData.LastName
+	// user.FirstName = updateData.FirstName
+	// user.LastName = updateData.LastName
 
-	database.DB.Save(&user)
+	// database.DB.Save(&user)
 
 	return c.Status(200).JSON(&updateData)
 }
