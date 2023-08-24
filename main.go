@@ -31,6 +31,7 @@ func main() {
 	app.Post("/register", controllers.Register)
 	app.Post("/login", controllers.Login)
 	app.Get("/currentuser", controllers.CurrentUser)
+	app.Get("/logout", controllers.Logout)
 	log.Fatal(app.Listen(":3000"))
 
 }
