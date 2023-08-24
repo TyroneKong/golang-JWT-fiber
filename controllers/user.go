@@ -10,7 +10,7 @@ import (
 
 type User struct {
 	ID    uint   `json:"id" gorm:"primaryKey"`
-	Name  string `json:"first_name"`
+	Name  string `json:"name"`
 	Email string `json:"email"`
 	// Username string `gorm:"size:255;not null;unique" json:"username"`
 	Password []byte `gorm:"size:255;not null;" json:"password"`
@@ -55,9 +55,9 @@ func AllUsers(c *fiber.Ctx) error {
 
 func findUser(id int, user *models.User) error {
 
-	// if err := database.DB.Find(&user, "id = ?", id).Error; err != nil {
-	// 	return errors.New("user does not exist")
-	// }
+	if err := database.DB.Find(&user, "id = ?", id).Error; err != nil {
+		return errors.New("user does not exist")
+	}
 
 	return nil
 }
