@@ -4,7 +4,9 @@ import (
 	"errors"
 	"learnfiber/database"
 	"learnfiber/models"
+	"os"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,7 +15,7 @@ type User struct {
 	Name     string `json:"name"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
-	Password []byte `gorm:"size:255;not null;" json:"password"`
+	Password []byte `json:"-"`
 }
 
 // func CreateResponseUser(userModel models.User) User {
@@ -33,6 +35,7 @@ type User struct {
 // }
 
 func GetAllUsers() ([]User, error) {
+
 	var u []User
 
 	if err := database.DB.Find(&u).Error; err != nil {
@@ -43,6 +46,20 @@ func GetAllUsers() ([]User, error) {
 }
 
 func AllUsers(c *fiber.Ctx) error {
+
+	cookie := c.Cookies("jwt")
+
+	_, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("API_SECRET")), nil
+
+	})
+
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"message": "unauthorized",
+		})
+	}
 
 	u, err := GetAllUsers()
 
