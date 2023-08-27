@@ -30,7 +30,7 @@ func setupRoutes(app *fiber.App) {
 	app.Post("/register", controllers.Register)
 	app.Get("/allProducts", controllers.AllProducts)
 	app.Get("/allproducts/:id", controllers.GetProductById)
-	app.Get("/allorders", controllers.AllOrders)
+	app.Get("/allorders", controllers.GetAllOrders)
 	app.Post("/createorder", controllers.CreateOrder)
 	app.Post("/login", controllers.Login)
 	app.Get("/currentuser", controllers.CurrentUser)

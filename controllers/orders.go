@@ -1,18 +1,13 @@
 package controllers
 
 import (
-	"errors"
 	"learnfiber/database"
 	"learnfiber/models"
-	"os"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
 
 type Order struct {
-	gorm.Model
 	ID           uint    `json:"id" gorm:"primaryKey"`
 	ProductRefer int     `json:"product_id"`
 	Product      Product `gorm:"foreignKey:ProductRefer"`
@@ -20,13 +15,13 @@ type Order struct {
 	User         User    `gorm:"foreignKey:UserRefer"`
 }
 
-func createResponseOrder(order Order, user User, product Product) Order {
+func createResponseOrder(order models.Order, user User, product Product) Order {
 	return Order{ID: order.ID, User: user, Product: product}
 }
 
 func CreateOrder(c *fiber.Ctx) error {
 
-	var order Order
+	var order models.Order
 
 	if err := c.BodyParser(&order); err != nil {
 		return c.JSON(err.Error())
@@ -51,39 +46,20 @@ func CreateOrder(c *fiber.Ctx) error {
 	return c.Status(200).JSON(response)
 }
 
-func GetAllOrders() ([]Order, error) {
+func GetAllOrders(c *fiber.Ctx) error {
 
-	var o []Order
+	orders := []models.Order{}
+	database.DB.Find(&orders)
+	responseOrders := []Order{}
 
-	if err := database.DB.Find(&o).Error; err != nil {
-		return o, errors.New("no users found")
+	for _, order := range orders {
+		var user models.User
+		var product models.Product
+		database.DB.Find(&user, "id = ?", order.UserRefer)
+		database.DB.Find(&product, "id = ?", order.ProductRefer)
+		responseOrder := createResponseOrder(order, CreateResponseUser(user), CreateResponseProduct(product))
+		responseOrders = append(responseOrders, responseOrder)
+
 	}
-	return o, nil
-
-}
-
-func AllOrders(c *fiber.Ctx) error {
-
-	cookie := c.Cookies("jwt")
-
-	_, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("API_SECRET")), nil
-
-	})
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
-
-	o, err := GetAllOrders()
-
-	if err != nil {
-		return c.Status(400).JSON("No orders available")
-	}
-
-	return c.Status(200).JSON(&o)
-
+	return c.Status(200).JSON(responseOrders)
 }
