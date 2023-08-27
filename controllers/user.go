@@ -18,9 +18,9 @@ type User struct {
 	Password []byte `json:"-"`
 }
 
-// func CreateResponseUser(userModel models.User) User {
-// 	return User{ID: userModel.ID, FirstName: userModel.FirstName, LastName: userModel.LastName, Username: userModel.FirstName, Password: userModel.FirstName}
-// }
+func CreateResponseUser(userModel models.User) User {
+	return User{ID: userModel.ID, Name: userModel.Name, Username: userModel.Username, Email: userModel.Email, Password: userModel.Password}
+}
 
 // func CreateUser(c *fiber.Ctx) error {
 // 	var user models.User

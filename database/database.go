@@ -19,4 +19,6 @@ func ConnectDB() {
 	DB = connection
 
 	connection.AutoMigrate(&models.User{})
+	connection.AutoMigrate(&models.Product{})
+	connection.AutoMigrate(&models.Order{})
 }
