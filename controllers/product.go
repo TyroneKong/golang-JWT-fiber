@@ -55,8 +55,8 @@ func GetProductById(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(400).JSON("no user matching that id")
 	}
-
-	return c.Status(200).JSON(product)
+	response := CreateResponseProduct(product)
+	return c.Status(200).JSON(response)
 
 }
 

@@ -22,17 +22,17 @@ func CreateResponseUser(userModel models.User) User {
 	return User{ID: userModel.ID, Name: userModel.Name, Username: userModel.Username, Email: userModel.Email, Password: userModel.Password}
 }
 
-// func CreateUser(c *fiber.Ctx) error {
-// 	var user models.User
+func CreateUser(c *fiber.Ctx) error {
+	var user models.User
 
-// 	if err := c.BodyParser(&user); err != nil {
-// 		return c.Status(400).JSON(err.Error())
-// 	}
-// 	// database.DB.Create(&user)
-// 	response := CreateResponseUser(user)
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
+	database.DB.Create(&user)
+	response := CreateResponseUser(user)
 
-// 	return c.Status(200).JSON(response)
-// }
+	return c.Status(200).JSON(response)
+}
 
 func GetAllUsers() ([]User, error) {
 
