@@ -19,7 +19,7 @@ func FindProduct(id int, product *models.Product) error {
 	database.DB.Find(&product, "id = ?", id)
 	
 	if product.ID == 0 {
-			return errors.New("Product does not exist")
+		return errors.New("Product does not exist")
 	}
 	return nil
 
