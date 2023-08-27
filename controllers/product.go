@@ -12,6 +12,15 @@ type Product struct {
 	SerialNumber string `json:"serial_number"`
 }
 
+
+func FindProduct(id int64, product *models.Product) error {
+	err := databse.DB.Find(&product, "id = ?", id) err!= nil{
+	return c.Status(404).JSON("Product not found")	
+	}
+	return nil
+
+}
+
 func CreateResponseProduct(product models.Product) Product {
 	return Product{ID: product.ID, Name: product.Name, SerialNumber: product.SerialNumber}
 }
