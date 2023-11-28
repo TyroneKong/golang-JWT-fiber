@@ -1,12 +1,11 @@
-package controllers
+package handlers
 
 import (
 	"errors"
 	"learnfiber/database"
+	"learnfiber/helpers"
 	"learnfiber/models"
-	"os"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -30,7 +29,7 @@ func CreateResponseProduct(product models.Product) Product {
 	return Product{ID: product.ID, Name: product.Name, SerialNumber: product.SerialNumber}
 }
 
-func CreateProduct(c *fiber.Ctx) error {
+func HandleCreateProduct(c *fiber.Ctx) error {
 	var product models.Product
 
 	if err := c.BodyParser(&product); err != nil {
@@ -41,7 +40,59 @@ func CreateProduct(c *fiber.Ctx) error {
 	return c.Status(200).JSON(response)
 }
 
-func GetProductById(c *fiber.Ctx) error {
+func HandleDeleteProduct(c *fiber.Ctx) error {
+
+	cookie := c.Cookies("jwt")
+
+	_, err := helpers.AuthUser(cookie)
+
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"message": "unauthorized",
+		})
+	}
+
+	var product models.Product
+	var user models.User
+
+	userId, err := c.ParamsInt(("userId"))
+	id, err := c.ParamsInt("id")
+
+	if err := FindUser(userId, &user); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
+
+	if user.Role != 1 {
+		return c.Status(401).JSON("You are not authorized to delete products")
+	}
+
+	if err := FindProduct(id, &product); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
+
+	if err != nil {
+		return c.Status((400)).JSON("no product matching that id")
+	}
+
+	database.DB.Where("id = ?", id).Delete(&product)
+	response := CreateResponseProduct(product)
+	return c.Status(200).JSON(response)
+}
+
+func HandleGetProductById(c *fiber.Ctx) error {
+
+	cookie := c.Cookies("jwt")
+
+	_, err := helpers.AuthUser(cookie)
+
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"message": "unauthorized",
+		})
+	}
+
 	id, err := c.ParamsInt("id")
 	var product models.Product
 
@@ -52,9 +103,6 @@ func GetProductById(c *fiber.Ctx) error {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	if err != nil {
-		return c.Status(400).JSON("no user matching that id")
-	}
 	response := CreateResponseProduct(product)
 	return c.Status(200).JSON(response)
 
@@ -71,14 +119,11 @@ func GetAllProducts() ([]Product, error) {
 
 }
 
-func AllProducts(c *fiber.Ctx) error {
+func HandleAllProducts(c *fiber.Ctx) error {
 
 	cookie := c.Cookies("jwt")
 
-	_, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("API_SECRET")), nil
-
-	})
+	_, err := helpers.AuthUser(cookie)
 
 	if err != nil {
 		c.Status(fiber.StatusUnauthorized)

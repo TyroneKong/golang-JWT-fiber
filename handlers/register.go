@@ -1,6 +1,9 @@
-package controllers
+package handlers
+
 
 import (
+	"errors"
+	"fmt"
 	"learnfiber/database"
 	"learnfiber/models"
 	"os"
@@ -12,7 +15,33 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Register(c *fiber.Ctx) error {
+func hashPassword(password map[string]string, cost int) ([]byte, error) {
+	// this ensures whats passed in actually is a password
+	if _, ok := password["password"]; !ok {
+		return nil, errors.New("password key not found in map")
+	}
+
+	hashed, err := bcrypt.GenerateFromPassword([]byte(password["password"]), cost)
+
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	return hashed, nil
+}
+
+func compareHashpassword(password map[string]string, user models.User) error {
+	// this ensures whats passed in actually is a password
+	if _, ok := password["password"]; !ok {
+		return errors.New("password key not found in map")
+	}
+	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password["password"]))
+	if err != nil {
+		return fmt.Errorf("Password comparisson has failed")
+	}
+	return nil
+}
+
+func HandleRegister(c *fiber.Ctx) error {
 	var data map[string]string
 	//we map the request to data using BodyParser and check for errors
 
@@ -22,7 +51,7 @@ func Register(c *fiber.Ctx) error {
 
 	// we hash the password usin bcrypt
 	// needed to convert password to byte array as func does not accept string
-	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
+	password, _ := hashPassword(data, 14)
 	user := models.User{
 		Name:     data["name"],
 		Email:    data["email"],
@@ -33,7 +62,7 @@ func Register(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
-func Login(c *fiber.Ctx) error {
+func HandleLogin(c *fiber.Ctx) error {
 	var data map[string]string
 	//we map the request to data using BodyParser
 	if err := c.BodyParser(&data); err != nil {
@@ -51,7 +80,7 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 	// we compare the hashed password
-	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(data["password"])); err != nil {
+	if err := compareHashpassword(data, user); err != nil {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON((fiber.Map{
 			"message": "incorrect password",
@@ -82,10 +111,18 @@ func Login(c *fiber.Ctx) error {
 	})
 }
 
-func CurrentUser(c *fiber.Ctx) error {
+func HandleCurrentUser(c *fiber.Ctx) error {
 	cookie := c.Cookies("jwt")
 
 	token, err := jwt.ParseWithClaims(cookie, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+
+		// checking that the jwt was signed with the correct method
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+
+		if !ok {
+			return nil, errors.New("unexpected sign in method")
+		}
+
 		return []byte(os.Getenv("API_SECRET")), nil
 
 	})
@@ -105,7 +142,7 @@ func CurrentUser(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
-func Logout(c *fiber.Ctx) error {
+func HandleLogout(c *fiber.Ctx) error {
 	cookie := fiber.Cookie{
 		Name:     "jwt",
 		Value:    "",
