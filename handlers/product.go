@@ -42,17 +42,6 @@ func HandleCreateProduct(c *fiber.Ctx) error {
 
 func HandleDeleteProduct(c *fiber.Ctx) error {
 
-	cookie := c.Cookies("jwt")
-
-	_, err := helpers.AuthUser(cookie)
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
-
 	var product models.Product
 	var user models.User
 

@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 func CheckAuth(c *fiber.Ctx) error {
@@ -22,5 +22,5 @@ func CheckAuth(c *fiber.Ctx) error {
 		})
 
 	}
-	return nil
+	return c.Next()
 }

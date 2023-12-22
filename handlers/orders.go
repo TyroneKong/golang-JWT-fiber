@@ -1,6 +1,5 @@
 package handlers
 
-
 import (
 	"errors"
 	"learnfiber/database"
@@ -50,17 +49,6 @@ func HandleCreateOrder(c *fiber.Ctx) error {
 }
 
 func HandleGetAllOrders(c *fiber.Ctx) error {
-
-	cookie := c.Cookies("jwt")
-
-	_, err := helpers.AuthUser(cookie)
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
 
 	orders := []models.Order{}
 	database.DB.Find(&orders)
@@ -172,17 +160,6 @@ func HandleGetOrdersByUser(c *fiber.Ctx) error {
 }
 
 func HandleDeleteOrder(c *fiber.Ctx) error {
-
-	cookie := c.Cookies("jwt")
-
-	_, err := helpers.AuthUser(cookie)
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
 
 	id, err := c.ParamsInt("id")
 	var order models.Order

@@ -1,6 +1,5 @@
 package handlers
 
-
 import (
 	"errors"
 	"learnfiber/database"
@@ -120,17 +119,6 @@ func FindUser(id int, user *models.User) error {
 }
 
 func HandleGetUserById(c *fiber.Ctx) error {
-
-	cookie := c.Cookies("jwt")
-
-	_, err := helpers.AuthUser(cookie)
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
 
 	id, err := c.ParamsInt("id")
 	var user models.User
