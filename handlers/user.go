@@ -89,17 +89,6 @@ func GetAllUsers() ([]User, error) {
 
 func HandleAllUsers(c *fiber.Ctx) error {
 
-	cookie := c.Cookies("jwt")
-
-	_, err := helpers.AuthUser(cookie)
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
-
 	u, err := GetAllUsers()
 
 	if err != nil {

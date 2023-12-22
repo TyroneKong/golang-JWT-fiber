@@ -27,7 +27,7 @@ func setupRoutes(app *fiber.App) {
 	app.Get("/albums", handlers.GetAlbums)
 	app.Get("/albums/:id", handlers.GetAlbumsById)
 	app.Post("/createproduct", handlers.HandleCreateProduct)
-	app.Get("/allusers", handlers.HandleAllUsers)
+	app.Get("protected/allusers", handlers.HandleAllUsers)
 	app.Get("/protected/user/:id", handlers.HandleGetUserById)
 	app.Put("/allusers/:id", handlers.HandleUpdateUser)
 	app.Post("/user/role/:id", handlers.HandleSetRole)
