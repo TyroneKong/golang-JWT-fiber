@@ -3,8 +3,8 @@ package handlers
 import (
 	"errors"
 	"learnfiber/database"
-	"learnfiber/helpers"
 	"learnfiber/models"
+	helpers "learnfiber/utils"
 
 	"github.com/gofiber/fiber/v2"
 )

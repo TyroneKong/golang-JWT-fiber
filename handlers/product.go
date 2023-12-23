@@ -3,7 +3,6 @@ package handlers
 import (
 	"errors"
 	"learnfiber/database"
-	"learnfiber/helpers"
 	"learnfiber/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -71,17 +70,6 @@ func HandleDeleteProduct(c *fiber.Ctx) error {
 
 func HandleGetProductById(c *fiber.Ctx) error {
 
-	cookie := c.Cookies("jwt")
-
-	_, err := helpers.AuthUser(cookie)
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
-
 	id, err := c.ParamsInt("id")
 	var product models.Product
 
@@ -109,17 +97,6 @@ func GetAllProducts() ([]Product, error) {
 }
 
 func HandleAllProducts(c *fiber.Ctx) error {
-
-	cookie := c.Cookies("jwt")
-
-	_, err := helpers.AuthUser(cookie)
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
 
 	p, err := GetAllProducts()
 

@@ -3,7 +3,6 @@ package handlers
 import (
 	"errors"
 	"learnfiber/database"
-	"learnfiber/helpers"
 	"learnfiber/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -77,17 +76,6 @@ func findOrder(id int, order *models.Order) error {
 
 func HandleGetOrderById(c *fiber.Ctx) error {
 
-	cookie := c.Cookies("jwt")
-
-	_, err := helpers.AuthUser(cookie)
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
-
 	id, err := c.ParamsInt("id")
 	var order models.Order
 
@@ -119,17 +107,6 @@ func HandleGetOrderById(c *fiber.Ctx) error {
 
 // Add a new endpoint to get orders by user ID
 func HandleGetOrdersByUser(c *fiber.Ctx) error {
-
-	cookie := c.Cookies("jwt")
-
-	_, err := helpers.AuthUser(cookie)
-
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(fiber.Map{
-			"message": "unauthorized",
-		})
-	}
 
 	userID, err := c.ParamsInt("user_id")
 	if err != nil {
