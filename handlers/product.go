@@ -39,6 +39,11 @@ func HandleCreateProduct(c *fiber.Ctx) error {
 	return c.Status(200).JSON(response)
 }
 
+const (
+	Admin = iota + 1
+	Internal
+)
+
 func HandleDeleteProduct(c *fiber.Ctx) error {
 
 	var product models.Product
@@ -51,7 +56,7 @@ func HandleDeleteProduct(c *fiber.Ctx) error {
 		return c.Status(400).JSON(err.Error())
 	}
 
-	if user.Role != 1 {
+	if user.Role != Admin {
 		return c.Status(401).JSON("You are not authorized to delete products")
 	}
 
