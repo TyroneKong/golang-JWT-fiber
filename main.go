@@ -14,7 +14,7 @@ func setupRoutes(app *fiber.App) {
 
 	handler := handlers.NewHandler()
 
-	app.Use("/protected", middleware.CheckAuth)
+	protected := app.Group("/protected", middleware.CheckAuth)
 
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true,
@@ -27,18 +27,18 @@ func setupRoutes(app *fiber.App) {
 	app.Get("/albums", handlers.GetAlbums)
 	app.Get("/albums/:id", handlers.GetAlbumsById)
 	app.Post("/createproduct", handlers.HandleCreateProduct)
-	app.Get("protected/allusers", handlers.HandleAllUsers)
-	app.Get("/protected/user/:id", handlers.HandleGetUserById)
-	app.Put("/protected/user/:id", handlers.HandleUpdateUser)
+	protected.Get("/allusers", handlers.HandleAllUsers)
+	protected.Get("/user/:id", handlers.HandleGetUserById)
+	protected.Put("/user/:id", handlers.HandleUpdateUser)
 	app.Post("/user/role/:id", handlers.HandleSetRole)
 	app.Post("/register", handlers.HandleRegister)
-	app.Get("/protected/allProducts", handlers.HandleAllProducts)
+	protected.Get("/allProducts", handlers.HandleAllProducts)
 	app.Get("/allproducts/:id", handlers.HandleGetProductById)
-	app.Delete("/protected/deleteproduct/:userId/:id", handlers.HandleDeleteProduct)
-	app.Get("/protected/allorders", handlers.HandleGetAllOrders)
+	protected.Delete("/deleteproduct/:userId/:id", handlers.HandleDeleteProduct)
+	protected.Get("/allorders", handlers.HandleGetAllOrders)
 	app.Get("/orders/user/:user_id", handlers.HandleGetOrdersByUser)
 	app.Post("/createorder", handlers.HandleCreateOrder)
-	app.Post("/protected/deleteorder/:id", handlers.HandleDeleteOrder)
+	protected.Post("/deleteorder/:id", handlers.HandleDeleteOrder)
 	app.Post("/login", handlers.HandleLogin)
 	app.Get("/currentuser", handlers.HandleCurrentUser)
 	app.Get("/logout", handlers.HandleLogout)
