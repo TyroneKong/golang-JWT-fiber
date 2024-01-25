@@ -14,13 +14,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func hashPassword(password map[string]string, cost int) ([]byte, error) {
+func hashPassword(data map[string]string, cost int) ([]byte, error) {
 	// this ensures whats passed in actually is a password
-	if _, ok := password["password"]; !ok {
+	if _, ok := data["password"]; !ok {
 		return nil, errors.New("password key not found in map")
 	}
 
-	hashed, err := bcrypt.GenerateFromPassword([]byte(password["password"]), cost)
+	hashed, err := bcrypt.GenerateFromPassword([]byte(data["password"]), cost)
 
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -28,12 +28,12 @@ func hashPassword(password map[string]string, cost int) ([]byte, error) {
 	return hashed, nil
 }
 
-func compareHashpassword(password map[string]string, user models.User) error {
+func compareHashpassword(data map[string]string, user models.User) error {
 	// this ensures whats passed in actually is a password
-	if _, ok := password["password"]; !ok {
+	if _, ok := data["password"]; !ok {
 		return errors.New("password key not found in map")
 	}
-	err := bcrypt.CompareHashAndPassword(user.Password, []byte(password["password"]))
+	err := bcrypt.CompareHashAndPassword(user.Password, []byte(data["password"]))
 	if err != nil {
 		return fmt.Errorf("Password comparisson has failed")
 	}

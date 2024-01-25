@@ -3,6 +3,8 @@ package database
 import (
 	"learnfiber/models"
 
+	"log"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -12,9 +14,9 @@ var DB *gorm.DB
 func ConnectDB() {
 	connection, err := gorm.Open(mysql.Open("root:root@/golang"), &gorm.Config{})
 	if err != nil {
-		panic("could not connect to the database")
+		log.Panic("could not connect to the database")
 	} else {
-		println("We are connected to the database")
+		log.Println("We are connected to the database")
 	}
 	DB = connection
 
